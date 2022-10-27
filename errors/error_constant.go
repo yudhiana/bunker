@@ -2,10 +2,10 @@ package errors
 
 import "net/http"
 
-type appErrorCode int
+type AppErrorCode int
 
 const (
-	StatusBadRequest appErrorCode = iota + 1
+	StatusBadRequest AppErrorCode = iota + 1
 	StatusUnAuthorized
 	StatusPaymentRequired
 	StatusForbidden
@@ -36,8 +36,8 @@ const (
 	StatusUnavailableForLegalReasons
 )
 
-func errorCode(code appErrorCode) string {
-	var codex map[appErrorCode]string = map[appErrorCode]string{
+func errorCode(code AppErrorCode) string {
+	var codex map[AppErrorCode]string = map[AppErrorCode]string{
 		StatusBadRequest:                   "IE-01",
 		StatusUnAuthorized:                 "IE-02",
 		StatusPaymentRequired:              "IE-03",
@@ -103,7 +103,7 @@ var (
 	UnavailableForLegalReasons   = &ApplicationError{Code: StatusUnavailableForLegalReasons, HttpStatusCode: http.StatusUnavailableForLegalReasons, ErrorCode: errorCode(StatusUnavailableForLegalReasons), Message: message(StatusUnavailableForLegalReasons)}
 )
 
-func getApplicationError(code appErrorCode) *ApplicationError {
+func getApplicationError(code AppErrorCode) *ApplicationError {
 	switch code {
 	case StatusBadRequest:
 		return BadRequest
@@ -167,7 +167,7 @@ func getApplicationError(code appErrorCode) *ApplicationError {
 	return nil
 }
 
-func message(code appErrorCode) string {
+func message(code AppErrorCode) string {
 	switch code {
 	case StatusBadRequest:
 		return "Bad Request"

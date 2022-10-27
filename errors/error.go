@@ -1,14 +1,14 @@
 package errors
 
 type ApplicationError struct {
-	Code           appErrorCode `json:"code"`
+	Code           AppErrorCode `json:"code"`
 	HttpStatusCode int          `json:"http_status_code"`
 	ErrorCode      string       `json:"error_code"`
 	Error          error        `json:"error"`
 	Message        string       `json:"message"`
 }
 
-func New(code appErrorCode) *ApplicationError {
+func New(code AppErrorCode) *ApplicationError {
 	return getApplicationError(code)
 }
 
