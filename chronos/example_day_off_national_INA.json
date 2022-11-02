@@ -1,0 +1,130 @@
+[
+    {
+        "id": 100,
+        "calendar_date": "2022-01-01 00:00:00",
+        "calendar_day": "Saturday",
+        "description": "Tahun Baru Masehi 2022",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:49:36"
+    },
+    {
+        "id": 101,
+        "calendar_date": "2022-02-01 00:00:00",
+        "calendar_day": "Tuesday",
+        "description": "Tahun baru Imlek 2573",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:50:40"
+    },
+    {
+        "id": 102,
+        "calendar_date": "2022-02-28 00:00:00",
+        "calendar_day": "Monday",
+        "description": "Isra' Mi'raj Nabi Muhammad SAW ",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:51:30"
+    },
+    {
+        "id": 104,
+        "calendar_date": "2022-03-03 00:00:00",
+        "calendar_day": "Thursday",
+        "description": "Hari Nyepi (tahun baru saka 1944)",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:52:39"
+    },
+    {
+        "id": 105,
+        "calendar_date": "2022-04-15 00:00:00",
+        "calendar_day": "Friday",
+        "description": "Wafat Isa Almasih",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:53:48"
+    },
+    {
+        "id": 107,
+        "calendar_date": "2022-05-01 00:00:00",
+        "calendar_day": "Sunday",
+        "description": "Hari Buruh Internasional",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:54:52"
+    },
+    {
+        "id": 109,
+        "calendar_date": "2022-05-02 00:00:00",
+        "calendar_day": "Monday",
+        "description": "Idul Fitri Day1",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:55:39"
+    },
+    {
+        "id": 111,
+        "calendar_date": "2022-05-03 00:00:00",
+        "calendar_day": "Tuesday",
+        "description": "Idul Fitri Day2",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:55:59"
+    },
+    {
+        "id": 112,
+        "calendar_date": "2022-05-16 00:00:00",
+        "calendar_day": "Monday",
+        "description": "Hari Raya Waisak 2566 BE",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:56:51"
+    },
+    {
+        "id": 113,
+        "calendar_date": "2022-05-26 00:00:00",
+        "calendar_day": "Thursday",
+        "description": "Kenaikan Isa Almasih",
+        "created_by": "452",
+        "created_at": "2022-01-03 02:59:59"
+    },
+    {
+        "id": 115,
+        "calendar_date": "2022-06-01 00:00:00",
+        "calendar_day": "Wednesday",
+        "description": "Hari Lahir Pancasila",
+        "created_by": "452",
+        "created_at": "2022-01-03 03:00:21"
+    },
+    {
+        "id": 116,
+        "calendar_date": "2022-07-09 00:00:00",
+        "calendar_day": "Saturday",
+        "description": "Hari Raya Idul Adha",
+        "created_by": "452",
+        "created_at": "2022-01-03 03:01:08"
+    },
+    {
+        "id": 118,
+        "calendar_date": "2022-07-30 00:00:00",
+        "calendar_day": "Saturday",
+        "description": "Tahun Baru Islam 1444 H",
+        "created_by": "452",
+        "created_at": "2022-01-03 03:01:48"
+    },
+    {
+        "id": 120,
+        "calendar_date": "2022-08-17 00:00:00",
+        "calendar_day": "Wednesday",
+        "description": "HUT RI",
+        "created_by": "452",
+        "created_at": "2022-01-03 03:02:42"
+    },
+    {
+        "id": 122,
+        "calendar_date": "2022-10-08 00:00:00",
+        "calendar_day": "Saturday",
+        "description": "Maulid Nabi Muhammad SAW",
+        "created_by": "452",
+        "created_at": "2022-01-03 03:03:23"
+    },
+    {
+        "id": 124,
+        "calendar_date": "2022-12-25 00:00:00",
+        "calendar_day": "Sunday",
+        "description": "Hari Raya Natal",
+        "created_by": "452",
+        "created_at": "2022-01-03 03:04:10"
+    }
+]
