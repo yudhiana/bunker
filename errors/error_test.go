@@ -1,43 +1,48 @@
 package errors_test
 
 import (
+	appErr "bunker/errors"
 	"fmt"
 	"net/http"
 	"testing"
-
-	"github.com/yudhiana/bunker/errors"
 )
 
-func TestNew(t *testing.T) {
+func TestNewError(t *testing.T) {
 
-	errBunker := errors.New(errors.StatusBadRequest)
+	errBadRequest := appErr.New(appErr.StatusBadRequest)
 
-	if errBunker.Code != errors.StatusBadRequest {
-		t.Errorf("Invalid status code [%v] not equal bad requests", errBunker.Code)
+	if errBadRequest.Code != appErr.StatusBadRequest {
+		t.Errorf("Invalid status code [%v] not equal bad requests", errBadRequest.Code)
 	}
 
-	if errBunker.HttpStatusCode != http.StatusBadRequest {
-		t.Errorf("Invalid http status code [%v] not equal http status bad requests", errBunker.HttpStatusCode)
+	if errBadRequest.HttpStatusCode != http.StatusBadRequest {
+		t.Errorf("Invalid http status code [%v] not equal http status bad requests", errBadRequest.HttpStatusCode)
 	}
 
-	newError := fmt.Errorf("%s", errors.BadRequest.ErrorCode)
-	errBunker.SetError(newError)
-	if errBunker.Error == nil {
+	newError := fmt.Errorf("%s", appErr.BadRequest.ErrorCode)
+	errBadRequest.SetError(newError)
+	if errBadRequest.Error == nil {
 		t.Error("error must not nil value")
 	}
 
-	if errBunker.Error != newError {
+	if errBadRequest.Error != newError {
 		t.Error("invalid error")
 	}
 
-	if errBunker.ErrorCode != errors.BadRequest.ErrorCode {
+	if errBadRequest.ErrorCode != appErr.BadRequest.ErrorCode {
 		t.Error("invalid error code")
 	}
 
-	msgError := errors.BadRequest.Message
-	errBunker.SetMessage(msgError)
-	if errBunker.Message != msgError {
+	msgError := appErr.BadRequest.Message
+	errBadRequest.SetMessage(msgError)
+	if errBadRequest.Message != msgError {
 		t.Error("invalid message error")
+	}
+
+	newMsgError := "new error"
+	errBadRequest.SetMessage(newMsgError)
+	if errBadRequest.Message != newMsgError {
+		t.Error("invalid message")
 	}
 
 }
