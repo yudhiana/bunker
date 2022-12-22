@@ -165,6 +165,11 @@ func (base *Requester) initRequestClient() bool {
 		base.Request.Header.Add("Content-Type", Json)
 	}
 
+	if bunker.IsEmptyString(base.Method) {
+		base.Errors = append(base.Errors, errors.New("the request method has not been selected"))
+		return false
+	}
+
 	if base.initClient().HaveError() {
 		return false
 	}
@@ -173,6 +178,12 @@ func (base *Requester) initRequestClient() bool {
 }
 
 func (base *Requester) Do() *Requester {
+	defer func() {
+		if base.HaveError() {
+			bunker.PrintErr(fmt.Sprint(base.Errors))
+		}
+	}()
+
 	startTime := time.Now()
 	if !base.initRequestClient() {
 		return base
@@ -262,9 +273,7 @@ func (base *Requester) SetDebug(debug bool) *Requester {
 func (base *Requester) printDebug() {
 	if base.Debug || os.Getenv("debug") == "true" {
 		debugMessage := base.debug()
-		if base.HaveError() {
-			bunker.PrintErr(fmt.Sprint(base.Errors))
-		} else {
+		if !base.HaveError() {
 			bunker.LogInfo(debugMessage)
 		}
 	}
