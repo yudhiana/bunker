@@ -69,7 +69,8 @@ type Requester struct {
 
 func New(url string) *Requester {
 	return &Requester{
-		URL: url,
+		URL:    url,
+		Header: make(map[string][]string),
 	}
 }
 
