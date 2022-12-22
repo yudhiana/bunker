@@ -1,7 +1,6 @@
-package errors_test
+package bunker
 
 import (
-	appErr "bunker/errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -9,9 +8,9 @@ import (
 
 func TestBunkerError(t *testing.T) {
 
-	errBadRequest := appErr.New(appErr.StatusBadRequest)
+	errBadRequest := New(StatusBadRequest)
 
-	if errBadRequest.Code != appErr.StatusBadRequest {
+	if errBadRequest.Code != StatusBadRequest {
 		t.Errorf("Invalid status code [%v] not equal bad requests", errBadRequest.Code)
 	}
 
@@ -19,7 +18,7 @@ func TestBunkerError(t *testing.T) {
 		t.Errorf("Invalid http status code [%v] not equal http status bad requests", errBadRequest.HttpStatusCode)
 	}
 
-	newError := fmt.Errorf("%s", appErr.BadRequest.ErrorCode)
+	newError := fmt.Errorf("%s", BadRequest.ErrorCode)
 	errBadRequest.SetError(newError)
 	if errBadRequest.Error == nil {
 		t.Error("error must not nil value")
@@ -29,11 +28,11 @@ func TestBunkerError(t *testing.T) {
 		t.Error("invalid error")
 	}
 
-	if errBadRequest.ErrorCode != appErr.BadRequest.ErrorCode {
+	if errBadRequest.ErrorCode != BadRequest.ErrorCode {
 		t.Error("invalid error code")
 	}
 
-	msgError := appErr.BadRequest.Message
+	msgError := BadRequest.Message
 	errBadRequest.SetMessage(msgError)
 	if errBadRequest.Message != msgError {
 		t.Error("invalid message error")

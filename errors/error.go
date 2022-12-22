@@ -1,4 +1,4 @@
-package errors
+package bunker
 
 type ApplicationError struct {
 	Code           AppErrorCode `json:"code"`

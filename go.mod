@@ -1,4 +1,4 @@
-module bunker
+module github.com/yudhiana/bunker
 
 go 1.19
 

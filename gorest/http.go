@@ -1,7 +1,6 @@
 package bunker
 
 import (
-	"bunker"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -15,6 +14,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/yudhiana/bunker"
 
 	"golang.org/x/net/publicsuffix"
 )
