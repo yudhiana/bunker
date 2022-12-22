@@ -67,10 +67,12 @@ type Requester struct {
 	body io.Reader
 }
 
-func New(url string) *Requester {
+func New(link string) *Requester {
 	return &Requester{
-		URL:    url,
-		Header: make(map[string][]string),
+		URL:       link,
+		Header:    make(map[string][]string),
+		FormData:  make(url.Values),
+		QueryData: make(url.Values),
 	}
 }
 
@@ -186,7 +188,6 @@ func (base *Requester) Do() *Requester {
 
 func (base *Requester) initRequest(body io.Reader) (request *http.Request, err error) {
 	request, err = http.NewRequest(GET, base.URL, body)
-	base.Request = request
 	if err != nil {
 		return
 	}
@@ -196,6 +197,15 @@ func (base *Requester) initRequest(body io.Reader) (request *http.Request, err e
 	if base.Header != nil {
 		request.Header = base.Header
 	}
+
+	reqUrl := request.URL.Query()
+	for param, values := range base.QueryData {
+		for _, value := range values {
+			reqUrl.Add(param, value)
+		}
+	}
+	request.URL.RawQuery = reqUrl.Encode()
+	base.Request = request
 	return
 }
 
@@ -286,7 +296,44 @@ func (base *Requester) SetPayload(body interface{}) *Requester {
 	default:
 		base.Errors = append(base.Errors, fmt.Errorf("unsupported type of %T", reflect.TypeOf(body)))
 	}
+	return base
+}
 
+func (base *Requester) Query(query interface{}) *Requester {
+	switch reflect.ValueOf(query).Kind() {
+	case reflect.String:
+		if input, isString := query.(string); isString {
+			base.queryString(input)
+		}
+	case reflect.Map:
+		switch input := query.(type) {
+		case map[string]string:
+			base.queryMap(input)
+		default:
+			base.Errors = append(base.Errors, fmt.Errorf("unsupported type of %T", reflect.TypeOf(query)))
+		}
+	default:
+		base.Errors = append(base.Errors, fmt.Errorf("unsupported type of %T", reflect.TypeOf(query)))
+	}
+	return base
+}
+
+func (base *Requester) queryString(input string) *Requester {
+	if values, errParse := url.ParseQuery(input); errParse != nil {
+		base.Errors = append(base.Errors, errParse)
+		return base
+	} else {
+		for param := range values {
+			base.QueryData.Add(param, values.Get(param))
+		}
+	}
+	return base
+}
+
+func (base *Requester) queryMap(input map[string]string) *Requester {
+	for k, v := range input {
+		base.QueryData.Add(k, v)
+	}
 	return base
 }
 
@@ -357,7 +404,7 @@ func (base *Requester) debug() string {
 			time.Now().Format("2006/01/02 15:04:05"),
 			base.Method,
 			base.Request.Proto,
-			base.URL,
+			base.Request.URL,
 			base.Header,
 			string(base.readBodyRequest()),
 			base.Response.Status,
