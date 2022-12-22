@@ -135,14 +135,20 @@ func (base *Requester) SetContentType(contentType string) *Requester {
 	return base
 }
 
-func (base *Requester) initClient() *http.Client {
-	jar, _ := cookiejar.New(&cookiejar.Options{
+func (base *Requester) initClient() *Requester {
+	jar, errCookie := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
-	return &http.Client{
+	if errCookie != nil {
+		base.Errors = append(base.Errors, errCookie)
+		return base
+	}
+	client := &http.Client{
 		Jar:     jar,
 		Timeout: base.TimeOut,
 	}
+	base.Client = client
+	return base
 }
 
 func (base *Requester) SetTimeout(timeOut time.Duration) *Requester {
@@ -150,30 +156,33 @@ func (base *Requester) SetTimeout(timeOut time.Duration) *Requester {
 	return base
 }
 
+func (base *Requester) initRequestClient() bool {
+	if base.initRequest().HaveError() {
+		return false
+	}
+
+	if bunker.IsEmptyString(base.Request.Header.Get("Content-Type")) {
+		base.Request.Header.Add("Content-Type", Json)
+	}
+
+	if base.initClient().HaveError() {
+		return false
+	}
+
+	return true
+}
+
 func (base *Requester) Do() *Requester {
 	startTime := time.Now()
+	if !base.initRequestClient() {
+		return base
+	}
+
 	switch base.Method {
-	case GET, HEAD, DELETE, OPTIONS:
-		request, errGet := base.initRequest(nil)
-		if errGet != nil {
-			base.Errors = append(base.Errors, errGet)
-			return base
-		}
-		response, errClient := base.initClient().Do(request)
-		if errClient != nil {
-			base.Errors = append(base.Errors, errClient)
-			return base
-		}
-		base.Response = response
-	case POST, PUT, PATCH:
-		request, errGet := base.initRequest(base.body)
-		if errGet != nil {
-			base.Errors = append(base.Errors, errGet)
-			return base
-		}
-		response, errClient := base.initClient().Do(request)
-		if errClient != nil {
-			base.Errors = append(base.Errors, errClient)
+	case GET, HEAD, DELETE, OPTIONS, POST, PUT, PATCH:
+		response, errRequestClient := base.Client.Do(base.Request)
+		if errRequestClient != nil {
+			base.Errors = append(base.Errors, errRequestClient)
 			return base
 		}
 		base.Response = response
@@ -186,13 +195,14 @@ func (base *Requester) Do() *Requester {
 	return base
 }
 
-func (base *Requester) initRequest(body io.Reader) (request *http.Request, err error) {
-	request, err = http.NewRequest(base.Method, base.URL, body)
-	if err != nil {
-		return
+func (base *Requester) initRequest() *Requester {
+	request, errRequest := http.NewRequest(base.Method, base.URL, base.body)
+	if errRequest != nil {
+		base.Errors = append(base.Errors, errRequest)
+		return base
 	}
 	if base.Ctx != nil {
-		return request.WithContext(base.Ctx), nil
+		request = request.WithContext(base.Ctx)
 	}
 	if base.Header != nil {
 		request.Header = base.Header
@@ -206,7 +216,7 @@ func (base *Requester) initRequest(body io.Reader) (request *http.Request, err e
 	}
 	request.URL.RawQuery = reqUrl.Encode()
 	base.Request = request
-	return
+	return base
 }
 
 func (base *Requester) Get() *Requester {
