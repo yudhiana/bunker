@@ -187,7 +187,7 @@ func (base *Requester) Do() *Requester {
 }
 
 func (base *Requester) initRequest(body io.Reader) (request *http.Request, err error) {
-	request, err = http.NewRequest(GET, base.URL, body)
+	request, err = http.NewRequest(base.Method, base.URL, body)
 	if err != nil {
 		return
 	}
