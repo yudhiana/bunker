@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestNewError(t *testing.T) {
+func TestBunkerError(t *testing.T) {
 
 	errBadRequest := appErr.New(appErr.StatusBadRequest)
 

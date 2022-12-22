@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestBunker(t *testing.T) {
+func TestBunkerTime(t *testing.T) {
 	t.Run("testAddWeekDay", func(t *testing.T) {
 		expected := "2022-10-12"
 		today, _ := time.Parse("2006-01-02", "2022-10-03")
@@ -17,7 +17,6 @@ func TestBunker(t *testing.T) {
 		// Holidays in Indonesia
 		// The Prophet Muhammad's Birthday,
 		exampleHoliday, _ := time.Parse("2006-01-02", "2022-10-08")
-		
 		actualUnsetTodayAndHolidays := AddWeekDay(7, &today, []time.Time{
 			exampleHoliday,
 		}).Format("2006-01-02")
