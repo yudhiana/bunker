@@ -65,7 +65,7 @@ type Requester struct {
 
 	Errors []error
 
-	Ctx context.Context
+	Context context.Context
 
 	Debug              bool
 	insecureSkipVerify bool
@@ -92,6 +92,11 @@ func (base *Requester) HaveError() bool {
 
 func (base *Requester) SetHeader(param string, values ...string) *Requester {
 	base.Header[param] = values
+	return base
+}
+
+func (base *Requester) SetContext(ctx context.Context) *Requester {
+	base.Context = ctx
 	return base
 }
 
@@ -234,8 +239,8 @@ func (base *Requester) initRequest() *Requester {
 		base.Errors = append(base.Errors, errRequest)
 		return base
 	}
-	if base.Ctx != nil {
-		request = request.WithContext(base.Ctx)
+	if base.Context != nil {
+		request = request.WithContext(base.Context)
 	}
 	if base.Header != nil {
 		request.Header = base.Header
