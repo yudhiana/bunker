@@ -163,13 +163,11 @@ func (base *Requester) initClient() *Requester {
 		return base
 	}
 	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: base.insecureSkipVerify},
+		},
 		Jar:     jar,
 		Timeout: base.TimeOut,
-	}
-	if base.insecureSkipVerify {
-		client.Transport = &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: base.insecureSkipVerify},
-		}
 	}
 	base.Client = client
 	return base
