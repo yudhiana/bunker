@@ -39,12 +39,19 @@ const (
 	FormData   string = "application/x-www-form-urlencoded"
 )
 
-type Requester struct {
-	URL    string
-	Host   string
-	Method string
+const (
+	Auth   string = "Authorization"
+	Bearer string = "Bearer "
+)
 
-	Header map[string][]string
+type Requester struct {
+	path    string
+	BaseUrl string
+	Method  string
+
+	token     string
+	Header    map[string][]string
+	basicAuth map[string]string
 
 	FormData  url.Values
 	QueryData url.Values
@@ -67,12 +74,13 @@ type Requester struct {
 	body io.Reader
 }
 
-func New(link string) *Requester {
+func New(host string) *Requester {
 	return &Requester{
-		URL:       link,
+		BaseUrl:   host,
 		Header:    make(map[string][]string),
 		FormData:  make(url.Values),
 		QueryData: make(url.Values),
+		basicAuth: make(map[string]string),
 	}
 }
 
@@ -88,6 +96,16 @@ func (base *Requester) HaveError() bool {
 
 func (base *Requester) SetHeader(param string, values ...string) *Requester {
 	base.Header[param] = values
+	return base
+}
+
+func (base *Requester) SetBasicAuth(username, password string) *Requester {
+	base.basicAuth[username] = password
+	return base
+}
+
+func (base *Requester) SetToken(token string) *Requester {
+	base.token = token
 	return base
 }
 
@@ -207,7 +225,7 @@ func (base *Requester) Do() *Requester {
 }
 
 func (base *Requester) initRequest() *Requester {
-	request, errRequest := http.NewRequest(base.Method, base.URL, base.body)
+	request, errRequest := http.NewRequest(base.Method, base.BaseUrl, base.body)
 	if errRequest != nil {
 		base.Errors = append(base.Errors, errRequest)
 		return base
@@ -218,6 +236,14 @@ func (base *Requester) initRequest() *Requester {
 	if base.Header != nil {
 		request.Header = base.Header
 	}
+	if base.basicAuth != nil {
+		for user, pass := range base.basicAuth {
+			request.SetBasicAuth(user, pass)
+		}
+	}
+	if !bunker.IsEmptyString(base.token) {
+		request.Header.Add(Auth, Bearer+base.token)
+	}
 
 	reqUrl := request.URL.Query()
 	for param, values := range base.QueryData {
@@ -226,6 +252,13 @@ func (base *Requester) initRequest() *Requester {
 		}
 	}
 	request.URL.RawQuery = reqUrl.Encode()
+	if !bunker.IsEmptyString(base.path) {
+		if !bunker.IsEmptyString(request.URL.Path) {
+			request.URL.Path += base.path
+		} else {
+			request.URL.Path = base.path
+		}
+	}
 	base.Request = request
 	return base
 }
@@ -315,6 +348,11 @@ func (base *Requester) SetPayload(body interface{}) *Requester {
 	default:
 		base.Errors = append(base.Errors, fmt.Errorf("unsupported type of %T", reflect.TypeOf(body)))
 	}
+	return base
+}
+
+func (base *Requester) AddPath(path string) *Requester {
+	base.path = path
 	return base
 }
 
@@ -424,7 +462,7 @@ func (base *Requester) debug() string {
 			base.Method,
 			base.Request.Proto,
 			base.Request.URL,
-			base.Header,
+			base.headerToString(),
 			string(base.readBodyRequest()),
 			base.Response.Status,
 			base.timeIn.Format(time.RFC1123),
@@ -435,4 +473,12 @@ func (base *Requester) debug() string {
 		base.Errors = append(base.Errors, errors.New("can't debug before request"))
 		return ""
 	}
+}
+
+func (base *Requester) headerToString() (result string) {
+	if base.Header != nil {
+		header, _ := json.Marshal(base.Header)
+		return string(header)
+	}
+	return
 }
