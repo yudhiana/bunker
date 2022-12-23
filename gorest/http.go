@@ -3,6 +3,7 @@ package bunker
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -66,7 +67,8 @@ type Requester struct {
 
 	Ctx context.Context
 
-	Debug bool
+	Debug              bool
+	insecureSkipVerify bool
 
 	timeRequest time.Duration
 	timeIn      time.Time
@@ -83,12 +85,6 @@ func New(host string) *Requester {
 		basicAuth: make(map[string]string),
 	}
 }
-
-// Header := map[string][]string{
-// 			"Accept-Encoding": {"gzip, deflate"},
-// 			"Accept-Language": {"en-us"},
-// 			"Foo": {"Bar", "two"},
-// 		}
 
 func (base *Requester) HaveError() bool {
 	return len(base.Errors) != 0
@@ -109,6 +105,11 @@ func (base *Requester) SetToken(token string) *Requester {
 	return base
 }
 
+//	Header := map[string][]string{
+//				"Accept-Encoding": {"gzip, deflate"},
+//				"Accept-Language": {"en-us"},
+//				"Foo": {"Bar", "two"},
+//			}
 func (base *Requester) SetHeaders(headers interface{}) *Requester {
 	switch kind := reflect.ValueOf(headers); kind.Kind() {
 	case reflect.Map:
@@ -164,6 +165,11 @@ func (base *Requester) initClient() *Requester {
 	client := &http.Client{
 		Jar:     jar,
 		Timeout: base.TimeOut,
+	}
+	if base.insecureSkipVerify {
+		client.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: base.insecureSkipVerify},
+		}
 	}
 	base.Client = client
 	return base
@@ -300,6 +306,11 @@ func (base *Requester) Options() *Requester {
 
 func (base *Requester) SetDebug(debug bool) *Requester {
 	base.Debug = debug
+	return base
+}
+
+func (base *Requester) SkipVerify(verify bool) *Requester {
+	base.insecureSkipVerify = verify
 	return base
 }
 
@@ -476,8 +487,8 @@ func (base *Requester) debug() string {
 }
 
 func (base *Requester) headerToString() (result string) {
-	if base.Header != nil {
-		header, _ := json.Marshal(base.Header)
+	if base.Request.Header != nil {
+		header, _ := json.Marshal(base.Request.Header)
 		return string(header)
 	}
 	return
